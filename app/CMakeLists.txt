@@ -1,11 +1,10 @@
 cmake_policy(SET CMP0071 NEW)
 
-#file(GLOB PUBLIC_HEADER_LIST CONFIGURE_DEPENDS "${starting_project}/include/*.hpp")
 file(GLOB SRC_LIST CONFIGURE_DEPENDS "*.cpp")
 file(GLOB HEADER_LIST CONFIGURE_DEPENDS "*.hpp")
 
 set(project_uis
-    "../ui/MainWindow.ui"
+    "./ui/MainWindow.ui"
 )
 
 #set(project_qrcs "../rvl_sequence.qrc")
@@ -13,10 +12,9 @@ set(project_uis
 set(exe_target "app")
 
 add_executable(${exe_target}
-    #${PUBLIC_HEADER_LIST}
     ${SRC_LIST}
     ${HEADER_LIST}
-    #${project_uis}
+    ${project_uis}
     #${project_qrcs}
 )
 
@@ -27,11 +25,12 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 set_property(TARGET ${exe_target} PROPERTY AUTOMOC ON)
-target_compile_features(${exe_target} PUBLIC cxx_std_11)
+target_compile_features(${exe_target} PUBLIC cxx_std_20)
 
 target_include_directories(${exe_target}
     PRIVATE
-        .
+      .
+      "${starting_project}/lib/include"
 )
 
 # Check what is the compiler
@@ -58,13 +57,14 @@ get_target_property(MAIN_CFLAGS ${exe_target} COMPILE_OPTIONS)
 message("-- Target compiler flags are: ${MAIN_CFLAGS}")
 
 target_link_directories(${exe_target}
-    PRIVATE
+  PRIVATE
+
 )
 
-#source_group(
-#    TREE "${PROJECT_SOURCE_DIR}/include"
-#    PREFIX "Public Header Files"
-#    FILES ${PUBLIC_HEADER_LIST})
+target_link_libraries(${exe_target}
+  PRIVATE
+    lib_target
+)
 
 source_group(
     TREE "${PROJECT_SOURCE_DIR}/app"
